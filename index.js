@@ -20,8 +20,10 @@ var pie = {
   topping: "streusel",
   bakeTemp: "350 degrees",
   bakeTime: "75 minutes",
-  customer: "Tammy"
+  customer: "Tammy",
 }
+
+pie.decorate = cake.decorate.bind(pie);
 
 function makeCake() {
   var updateCakeStatus = updateStatus.bind(this);
@@ -29,8 +31,8 @@ function makeCake() {
 }
 
 function makePie() {
-  var updatePieStatus;
-  mix(updatePieStatus)
+  var updatePieStatus = updateStatus.bind(this);
+  mix.call(pie, updatePieStatus)
 }
 
 function updateStatus(statusText) {
@@ -46,17 +48,17 @@ function bake(updateFunction) {
 }
 
 function mix(updateFunction) {
-  debugger;
   var status = "Mixing " + this.ingredients.join(", ")
-  setTimeout(function() {
-    bake(updateFunction)
+  setTimeout(() => {
+    bake.call(this, updateFunction)
   }, 2000)
   updateFunction(status)
 }
 
 function cool(updateFunction) {
   var status = "It has to cool! Hands off!"
-  setTimeout(function() {
+  updateFunction(status)
+  setTimeout(() => {
     this.decorate(updateFunction)
   }, 2000)
 }
@@ -67,7 +69,6 @@ function makeDessert() {
   // `this` is the link I just clicked on
 
   if(this.innerText == "Make Cake"){
-    debugger;
     makeCake.call(this.parentElement);
   }else if (this.innerText == "Make Pie") {
     makePie.call(this.parentElement);
